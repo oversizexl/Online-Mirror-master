@@ -81,8 +81,8 @@ Online-Mirror/
 ├── scripts/                # 部署脚本目录
 │   ├── deploy.bat          # Windows 一键部署
 │   ├── deploy.sh           # Linux/Mac 一键部署
-│   ├── deploy-production.bat  # Windows 生产环境部署
-│   ├── deploy-production.sh   # Linux/Mac 生产环境部署
+│   ├── deploy-main.bat     # Windows 生产环境部署
+│   ├── deploy-main.sh      # Linux/Mac 生产环境部署
 │   └── test-dns.bat        # DNS 诊断脚本
 └── README.md               # 本文件
 ```
@@ -181,11 +181,8 @@ const API_BASE_URL = "https://online-mirror.your-subdomain.workers.dev";
 **方式 B：直接上传**
 
 ```bash
-# 部署到测试环境
-npx wrangler pages deploy . --project-name=online-mirror
-
-# 部署到生产环境（自定义域名）
-npx wrangler pages deploy . --project-name=online-mirror --branch=production
+# 部署到生产环境（main 分支 - 自定义域名）
+npx wrangler pages deploy . --project-name=online-mirror --branch=main
 ```
 
 ## 🎮 使用方法
@@ -549,8 +546,7 @@ git push -u origin main
 1. 清除浏览器缓存（Ctrl + Shift + Delete）
 2. 使用隐私/无痕模式测试
 3. 确保 `_redirects` 文件内容为：`/v /v.html 200!`
-4. 重新部署
-   ：`npx wrangler pages deploy . --project-name=online-mirror --branch=production`
+4. 重新部署：`npx wrangler pages deploy . --project-name=online-mirror --branch=main`
 
 ### Q8：别人访问链接打不开或很慢？
 

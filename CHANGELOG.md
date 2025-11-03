@@ -77,8 +77,8 @@
 
 ### 📋 部署脚本
 
-- `scripts/deploy-production.bat` - Windows 生产环境部署
-- `scripts/deploy-production.sh` - Linux/Mac 生产环境部署
+- `scripts/deploy-main.bat` - Windows 生产环境部署
+- `scripts/deploy-main.sh` - Linux/Mac 生产环境部署
 - `scripts/test-dns.bat` - DNS 诊断工具
 
 ### 🔄 API 变更

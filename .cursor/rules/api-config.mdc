@@ -10,7 +10,7 @@ description: API配置和请求规范
 
 ```javascript
 // config.js
-const API_BASE_URL = "https://online-mirror.1334132303.workers.dev";
+const API_BASE_URL = "https://api.zk9999902.dpdns.org";
 
 window.API_CONFIG = {
   BASE_URL: API_BASE_URL,

@@ -230,6 +230,209 @@ if (navigator.clipboard) {
 }
 ```
 
+## 🚀 现代性能优化技巧
+
+根据场景灵活使用以下现代 Web API：
+
+### 并发与异步
+
+```javascript
+// ✅ Promise.all - 并行请求
+const [photos, config] = await Promise.all([
+  fetch(API_CONFIG.PHOTOS),
+  fetch("config.json"),
+]);
+
+// ✅ requestIdleCallback - 空闲时执行非关键任务
+requestIdleCallback(() => {
+  // 预加载下一页数据
+  prefetchNextPage();
+});
+```
+
+### 性能监控
+
+```javascript
+// ✅ IntersectionObserver - 可见性检测（懒加载）
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      loadImage(entry.target);
+    }
+  });
+});
+
+// ✅ ResizeObserver - 响应式尺寸监听
+const resizeObserver = new ResizeObserver((entries) => {
+  entries.forEach((entry) => {
+    adjustLayout(entry.target);
+  });
+});
+```
+
+### 缓存优化
+
+```javascript
+// ✅ WeakMap - 缓存优化（自动垃圾回收）
+const imageCache = new WeakMap();
+function getCachedImage(element) {
+  if (!imageCache.has(element)) {
+    imageCache.set(element, loadImage(element));
+  }
+  return imageCache.get(element);
+}
+```
+
+### 计算密集任务
+
+```javascript
+// ✅ Web Workers - 后台线程处理
+const worker = new Worker("image-processor.js");
+worker.postMessage({ image: imageData });
+worker.onmessage = (e) => {
+  displayProcessedImage(e.data);
+};
+```
+
+### 动画优化
+
+```javascript
+// ✅ requestAnimationFrame - 流畅动画
+function animate() {
+  updatePosition();
+  requestAnimationFrame(animate);
+}
+```
+
+### 文件处理
+
+```javascript
+// ✅ URL.createObjectURL - 文件预览（无需 Base64）
+const objectURL = URL.createObjectURL(file);
+img.src = objectURL;
+// 使用完毕后释放
+URL.revokeObjectURL(objectURL);
+
+// ✅ Streams API - 大文件处理
+const stream = await fetch(largeFileUrl).then((r) => r.body);
+const reader = stream.getReader();
+```
+
+### 渲染优化
+
+```css
+/* ✅ content-visibility - 渲染优化 */
+.list-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+```
+
+### 工具函数
+
+```javascript
+// ✅ crypto.randomUUID - 唯一 ID 生成
+const uniqueId = crypto.randomUUID();
+
+// ✅ structuredClone - 深拷贝
+const copy = structuredClone(originalObject);
+```
+
+## 📐 代码质量规范
+
+### 1. 函数单一职责
+
+```javascript
+// ❌ 不好：一个函数做多件事
+function handlePhotoUpload(photo) {
+  validatePhoto(photo);
+  compressPhoto(photo);
+  uploadPhoto(photo);
+  updateUI();
+  showNotification();
+}
+
+// ✅ 好：拆分为多个单一职责函数
+async function uploadPhoto(photo) {
+  const validated = validatePhoto(photo);
+  const compressed = await compressPhoto(validated);
+  const result = await sendToServer(compressed);
+  return result;
+}
+
+function updateUIAfterUpload(result) {
+  refreshPhotoList();
+  showSuccessMessage(result);
+}
+```
+
+### 2. 避免嵌套过深
+
+```javascript
+// ❌ 不好：嵌套过深
+function processData(data) {
+  if (data) {
+    if (data.photos) {
+      if (data.photos.length > 0) {
+        data.photos.forEach((photo) => {
+          if (photo.url) {
+            // 处理逻辑
+          }
+        });
+      }
+    }
+  }
+}
+
+// ✅ 好：提前返回，降低嵌套
+function processData(data) {
+  if (!data?.photos?.length) return;
+
+  data.photos
+    .filter((photo) => photo.url)
+    .forEach((photo) => {
+      // 处理逻辑
+    });
+}
+```
+
+### 3. 简洁明了
+
+```javascript
+// ❌ 不好：冗长复杂
+function checkPermission(user) {
+  let hasPermission = false;
+  if (user !== null && user !== undefined) {
+    if (user.role === "admin" || user.role === "moderator") {
+      hasPermission = true;
+    }
+  }
+  return hasPermission;
+}
+
+// ✅ 好：简洁清晰
+function checkPermission(user) {
+  return ["admin", "moderator"].includes(user?.role);
+}
+```
+
+### 4. UI 还原标准
+
+- **1:1 还原**：严格按照设计图实现，像素级对齐
+- **响应式优先**：移动端和桌面端都要完美适配
+- **交互细节**：悬停效果、过渡动画、加载状态等不可遗漏
+
+### 5. 开发完毕检查清单
+
+```javascript
+// ✅ 开发完成前必须检查
+// 1. 控制台无错误和警告
+// 2. 所有功能正常工作
+// 3. 移动端和桌面端都测试
+// 4. 清理调试代码（console.log等）
+// 5. 代码格式化整齐
+```
+
 ## ⚠️ 禁止的做法
 
 1. ❌ 同步阻塞操作（如同步 XMLHttpRequest）
@@ -238,3 +441,6 @@ if (navigator.clipboard) {
 4. ❌ 无限循环或递归
 5. ❌ 在生产环境使用 `debugger` 语句
 6. ❌ 硬编码敏感信息（API 密钥、密码等）
+7. ❌ 嵌套层级超过 3 层
+8. ❌ 单个函数超过 50 行（复杂逻辑除外）
+9. ❌ 忽略控制台警告和错误

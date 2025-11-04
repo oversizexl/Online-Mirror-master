@@ -9,6 +9,10 @@ description: Cloudflare 部署流程和命令
 ### 部署到生产环境 (Main 分支 - 自定义域名)
 
 ```bash
+# 使用 pnpm (推荐)
+pnpm exec wrangler pages deploy . --project-name=online-mirror --branch=main --commit-dirty=true
+
+# 或使用 npx (也可以)
 npx wrangler pages deploy . --project-name=online-mirror --branch=main --commit-dirty=true
 ```
 
@@ -20,16 +24,46 @@ npx wrangler pages deploy . --project-name=online-mirror --branch=main --commit-
 ### 部署 Worker API
 
 ```bash
+# 使用 pnpm (推荐)
+pnpm exec wrangler deploy
+
+# 或直接使用 wrangler (如已全局安装)
 wrangler deploy
+```
+
+## 📦 包管理
+
+本项目使用 **pnpm** 作为包管理器：
+
+```bash
+# 安装依赖
+pnpm install
+
+# 运行脚本
+pnpm run test         # 启动本地前端服务器
+pnpm run test-full    # 启动前端+Worker
+pnpm run dev-worker   # 启动Worker开发服务器
+pnpm run deploy-worker # 部署Worker
 ```
 
 ## 📋 部署前检查清单
 
 1. ✅ 检查 [config.js](mdc:config.js) 中的 API_BASE_URL 是否正确
-2. ✅ 确认 R2 存储桶 `photos` 已创建
+2. ✅ 确认 R2 存储桶 `photos` 已创建（绑定名称：`PHOTO_BUCKET`）
 3. ✅ 测试所有页面功能正常
-4. ✅ 检查是否有 console.error 或调试代码
+4. ✅ 检查是否有 console.log 调试代码（允许 console.error）
 5. ✅ 确认部署到 main 分支（生产环境）
+6. ✅ Worker 的 wrangler.toml 中 R2 绑定未改动
+
+## 🔍 代码审查清单（开发完成前逐项确认）
+
+- ✅ API 均经 `window.API_CONFIG`，无硬编码 URL/短链接
+- ✅ URL/Base64 逻辑符合 `url-encoding.mdc`，并兼容旧格式
+- ✅ 拍照与上传遵循 10ms + `keepalive`，摄像头流正确关闭
+- ✅ 页面仅使用自定义 Toast/Confirm，样式与布局满足移动端
+- ✅ 所有用户输入先校验再使用，DOM 写入避免 `innerHTML`
+- ✅ Worker 响应含 CORS 头，错误返回结构与现有格式一致
+- ✅ 控制台无警告和错误
 
 ## 🔑 重要概念
 
@@ -41,6 +75,12 @@ wrangler deploy
 
 - Worker 通过 [wrangler.toml](mdc:wrangler.toml) 配置 R2 绑定
 - Pages 通过 [config.js](mdc:config.js) 获取 Worker API 地址
+
+### 包管理器
+
+- **使用**: pnpm（项目包含 `pnpm-lock.yaml`）
+- **原因**: 更快的安装速度、更少的磁盘空间占用
+- **命令**: 使用 `pnpm` 替代 `npm`
 
 ## ⚠️ 常见错误
 

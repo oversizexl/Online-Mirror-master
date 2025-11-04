@@ -13,6 +13,28 @@
     <!-- 预加载关键资源 -->
     <link rel="preload" href="config.js" as="script" />
     <style>
+      :root {
+        --color-bg-dark: #0a0e1a;
+        --color-surface: rgba(15, 23, 42, 0.85);
+        --color-surface-light: rgba(30, 41, 59, 0.6);
+        --color-border: rgba(148, 163, 184, 0.15);
+        --color-border-strong: rgba(148, 163, 184, 0.3);
+        --color-primary: #00d4ff;
+        --color-primary-dark: #0ea5e9;
+        --color-accent: #a78bfa;
+        --color-success: #10b981;
+        --color-warning: #f59e0b;
+        --color-text: #f1f5f9;
+        --color-text-muted: #94a3b8;
+        --color-text-dim: #64748b;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --shadow-glow: 0 0 30px rgba(177, 94, 16, 0.15);
+        --shadow-strong: 0 20px 50px rgba(0, 0, 0, 0.9);
+        --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -20,16 +42,21 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #0f172a;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: var(--color-bg-dark);
+        background-image: url("public/image/bg.png");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        position: relative;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 20px;
-        position: relative;
-        overflow-x: hidden;
-        overflow-y: auto;
+        line-height: 1.65;
+        color: var(--color-text);
       }
 
       body::before {
@@ -39,14 +66,12 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: 
-          radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.15), transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.15), transparent 50%);
-        pointer-events: none;
+        background: rgba(10, 14, 26, 0.7);
+        backdrop-filter: blur(6px);
         z-index: 0;
       }
 
-      @keyframes slideIn {
+      @keyframes fadeInUp {
         from {
           opacity: 0;
           transform: translateY(30px);
@@ -57,298 +82,6 @@
         }
       }
 
-      .container {
-        width: 100%;
-        max-width: 460px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(30px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 42px 32px;
-        border-radius: 28px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37),
-          0 30px 60px -12px rgba(50, 50, 93, 0.25),
-          inset 0 -1px 0 0 rgba(255, 255, 255, 0.4);
-        position: relative;
-        z-index: 1;
-        animation: slideIn 0.6s ease-out;
-      }
-
-      .container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: 28px;
-        padding: 1px;
-        background: linear-gradient(
-          145deg,
-          rgba(255, 255, 255, 0.5),
-          rgba(255, 255, 255, 0.1)
-        );
-        -webkit-mask: linear-gradient(#fff 0 0) content-box,
-          linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none;
-      }
-
-      h1 {
-        font-size: 32px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 8px;
-        text-align: center;
-        font-weight: 800;
-        letter-spacing: -1px;
-      }
-
-      .subtitle {
-        text-align: center;
-        color: #64748b;
-        font-size: 14px;
-        margin-bottom: 36px;
-        font-weight: 500;
-      }
-
-      .input-group {
-        margin-bottom: 20px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 8px;
-        color: #475569;
-        font-size: 13px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      input {
-        width: 100%;
-        padding: 14px 18px;
-        border: 2px solid rgba(148, 163, 184, 0.2);
-        border-radius: 14px;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.8);
-        color: #1e293b;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      }
-
-      input::placeholder {
-        color: #94a3b8;
-      }
-
-      input:focus {
-        outline: none;
-        border-color: #667eea;
-        background: #ffffff;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-        transform: translateY(-1px);
-      }
-
-      .button-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin: 32px 0 24px;
-      }
-
-      button {
-        padding: 14px 20px;
-        border: none;
-        border-radius: 14px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-      }
-
-      button::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-      }
-
-      button:active::before {
-        width: 300px;
-        height: 300px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.3);
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px 0 rgba(102, 126, 234, 0.4);
-      }
-
-      .btn-secondary {
-        background: rgba(255, 255, 255, 0.9);
-        color: #475569;
-        border: 2px solid rgba(148, 163, 184, 0.2);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      }
-
-      .btn-secondary:hover {
-        background: #ffffff;
-        border-color: #cbd5e1;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      }
-
-      #copy-btn {
-        width: 100%;
-        margin-top: 12px;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        box-shadow: 0 4px 15px 0 rgba(16, 185, 129, 0.3);
-      }
-
-      #copy-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px 0 rgba(16, 185, 129, 0.4);
-      }
-
-      .link-display {
-        background: linear-gradient(
-          135deg,
-          rgba(99, 102, 241, 0.05),
-          rgba(139, 92, 246, 0.05)
-        );
-        border: 2px dashed rgba(102, 126, 234, 0.3);
-        border-radius: 14px;
-        padding: 20px;
-        margin: 24px 0;
-        transition: all 0.3s ease;
-      }
-
-      .link-display:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(99, 102, 241, 0.08),
-          rgba(139, 92, 246, 0.08)
-        );
-        border-color: rgba(102, 126, 234, 0.5);
-      }
-
-      .link-display p {
-        color: #64748b;
-        font-size: 13px;
-        margin-bottom: 12px;
-        text-align: center;
-        font-weight: 600;
-      }
-
-      .link-display a {
-        color: #667eea;
-        word-break: break-all;
-        text-decoration: none;
-        font-size: 13px;
-        display: block;
-        text-align: center;
-        padding: 8px;
-        border-radius: 8px;
-        transition: all 0.2s;
-      }
-
-      .link-display a:hover {
-        background: rgba(102, 126, 234, 0.1);
-        color: #764ba2;
-      }
-
-      .notice {
-        background: linear-gradient(
-          135deg,
-          rgba(239, 68, 68, 0.06),
-          rgba(220, 38, 38, 0.04)
-        );
-        border-left: 4px solid #ef4444;
-        padding: 18px 20px;
-        margin: 24px 0;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.08);
-      }
-
-      .notice p {
-        color: #dc2626;
-        font-size: 13px;
-        line-height: 1.8;
-        margin: 6px 0;
-      }
-
-      .notice strong {
-        color: #b91c1c;
-        font-weight: 700;
-      }
-
-      .faq {
-        background: linear-gradient(
-          135deg,
-          rgba(16, 185, 129, 0.06),
-          rgba(5, 150, 105, 0.04)
-        );
-        border-left: 4px solid #10b981;
-        padding: 18px 20px;
-        margin: 24px 0 0;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
-      }
-
-      .faq p {
-        color: #059669;
-        font-size: 13px;
-        line-height: 1.8;
-        margin: 6px 0;
-      }
-
-      .faq strong {
-        color: #047857;
-        font-weight: 700;
-      }
-      /* 自定义提示框样式 */
-      .toast {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: #fff;
-        padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        z-index: 9999;
-        animation: slideDown 0.3s ease-out;
-        max-width: 80%;
-        word-wrap: break-word;
-        text-align: center;
-      }
-      .toast.success {
-        background-color: #4caf50;
-      }
-      .toast.error {
-        background-color: #f44336;
-      }
-      .toast.warning {
-        background-color: #ff9800;
-      }
       @keyframes slideDown {
         from {
           top: -100px;
@@ -359,6 +92,7 @@
           opacity: 1;
         }
       }
+
       @keyframes slideUp {
         from {
           top: 20px;
@@ -369,57 +103,689 @@
           opacity: 0;
         }
       }
+
+      .container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 1100px;
+        background: var(--color-surface);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--color-border);
+        padding: 0;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-strong), var(--shadow-glow);
+        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        overflow: hidden;
+      }
+
+      .sidebar {
+        background: rgba(15, 23, 42, 0.98);
+        padding: 32px 28px;
+        border-right: 1px solid var(--color-border);
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .main-content {
+        padding: 32px 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .hero {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(0, 212, 255, 0.15);
+        border: 1px solid rgba(0, 212, 255, 0.4);
+        color: var(--color-primary);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        width: fit-content;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3),
+          inset 0 0 15px rgba(0, 212, 255, 0.1);
+        animation: glow-pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes glow-pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(0, 212, 255, 0.3),
+            inset 0 0 15px rgba(0, 212, 255, 0.1);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(0, 212, 255, 0.5),
+            inset 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+      }
+
+      h1 {
+        font-size: 32px;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #ffb347 50%,
+          #ffa500 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        filter: drop-shadow(0 0 25px rgba(255, 140, 0, 0.5))
+          drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
+      }
+
+      .subtitle {
+        color: #e2e8f0;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.6;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .status-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .status-card {
+        background: var(--color-surface-light);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        border: 1px solid var(--color-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        transition: var(--transition-base);
+      }
+
+      .status-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: var(--color-border-strong);
+      }
+
+      .status-label {
+        color: var(--color-text-dim);
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      .status-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-text);
+        font-family: "Courier New", monospace;
+      }
+
+      .status-value.positive {
+        color: var(--color-primary);
+      }
+
+      .usage-steps {
+        display: grid;
+        gap: 8px;
+        counter-reset: step;
+      }
+
+      .usage-steps li {
+        list-style: none;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: center;
+        color: var(--color-text-muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .usage-steps li::before {
+        counter-increment: step;
+        content: counter(step);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: rgba(167, 139, 250, 0.15);
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        color: var(--color-accent);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--color-text);
+        letter-spacing: 0.3px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        background: rgba(15, 23, 42, 0.5);
+        color: var(--color-text);
+        transition: var(--transition-base);
+      }
+
+      input::placeholder {
+        color: var(--color-text-dim);
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        background: rgba(15, 23, 42, 0.8);
+        box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15),
+          inset 0 0 20px rgba(0, 212, 255, 0.05);
+      }
+
+      input:hover:not(:focus) {
+        border-color: var(--color-border-strong);
+        background: rgba(15, 23, 42, 0.7);
+      }
+
+      .form-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-base);
+        position: relative;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+      }
+
+      button:active:not(:disabled) {
+        transform: scale(0.97);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.4;
+        filter: grayscale(0.5);
+      }
+
+      .btn-primary {
+        background: var(--color-primary);
+        color: #0a0e1a;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        font-weight: 700;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #33ddff;
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: rgba(30, 41, 59, 0.7);
+        color: var(--color-text);
+        border: 1.5px solid var(--color-border-strong);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: var(--color-text-muted);
+        transform: translateY(-1px);
+      }
+
+      .btn-copy {
+        background: var(--color-accent);
+        color: #ffffff;
+        padding: 10px 18px;
+        box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+        font-size: 13px;
+      }
+
+      .btn-copy:hover:not(:disabled) {
+        background: #c4b5fd;
+        box-shadow: 0 0 25px rgba(167, 139, 250, 0.5);
+        transform: translateY(-1px);
+      }
+
+      .link-display {
+        border: 1.5px dashed var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        background: rgba(15, 23, 42, 0.4);
+        transition: var(--transition-base);
+      }
+
+      .link-display.active {
+        border-color: var(--color-primary);
+        background: rgba(0, 212, 255, 0.05);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+      }
+
+      .link-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .link-header p {
+        color: var(--color-text-muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .link-preview {
+        display: block;
+        width: 100%;
+        padding: 12px 14px;
+        background: rgba(15, 23, 42, 0.7);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border);
+        font-size: 13px;
+        word-break: break-all;
+        color: var(--color-text-dim);
+        text-decoration: none;
+        pointer-events: none;
+        transition: var(--transition-base);
+        font-family: "Courier New", monospace;
+      }
+
+      .link-preview.is-active {
+        pointer-events: auto;
+        border-color: rgba(0, 212, 255, 0.3);
+        color: var(--color-primary);
+      }
+
+      .link-preview.is-active:hover {
+        background: rgba(0, 212, 255, 0.1);
+        border-color: var(--color-primary);
+      }
+
+      .info-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .info-box {
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        border: 1px solid var(--color-border);
+        background: var(--color-surface-light);
+        transition: var(--transition-base);
+      }
+
+      .info-box:hover {
+        background: rgba(30, 41, 59, 0.75);
+        border-color: var(--color-border-strong);
+      }
+
+      .info-title {
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--color-text);
+        letter-spacing: 0.3px;
+      }
+
+      .info-list {
+        display: grid;
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .info-list li {
+        list-style: none;
+        display: grid;
+        gap: 4px;
+        line-height: 1.6;
+      }
+
+      .info-list strong {
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .info-list .info-question {
+        color: var(--color-text);
+        font-weight: 600;
+      }
+
+      .info-list .info-answer {
+        color: var(--color-text-muted);
+      }
+
+      .notice {
+        background: rgba(245, 158, 11, 0.08);
+        border-color: rgba(245, 158, 11, 0.25);
+      }
+
+      .notice .info-title {
+        color: var(--color-warning);
+      }
+
+      .faq {
+        background: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.25);
+      }
+
+      .faq .info-title {
+        color: var(--color-success);
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(12px);
+        color: var(--color-text);
+        padding: 14px 24px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border-strong);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        z-index: 9999;
+        animation: slideDown 0.3s ease-out;
+        max-width: 90%;
+        word-wrap: break-word;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .toast.success {
+        background: rgba(0, 212, 255, 0.15);
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+      }
+
+      .toast.error {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #ef4444;
+        color: #fca5a5;
+        box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+      }
+
+      .toast.warning {
+        background: rgba(245, 158, 11, 0.15);
+        border-color: var(--color-warning);
+        color: var(--color-warning);
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+      }
+
       .toast.hiding {
         animation: slideUp 0.3s ease-in forwards;
-        /* forwards 确保动画结束后保持最终状态（opacity: 0） */
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 900px;
+          grid-template-columns: 320px 1fr;
+        }
+
+        .sidebar {
+          padding: 28px 24px;
+        }
+
+        .main-content {
+          padding: 28px 30px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 16px;
+        }
+
+        .container {
+          grid-template-columns: 1fr;
+          max-width: 600px;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--color-border);
+          padding: 24px;
+        }
+
+        .main-content {
+          padding: 24px;
+        }
+
+        h1 {
+          font-size: 26px;
+        }
+
+        .form-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 12px;
+        }
+
+        .sidebar {
+          padding: 20px;
+          gap: 20px;
+        }
+
+        .main-content {
+          padding: 20px;
+          gap: 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        .link-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .btn-copy {
+          width: 100%;
+        }
+
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 400px) {
+        body {
+          padding: 8px;
+        }
+
+        .sidebar {
+          padding: 18px;
+        }
+
+        .main-content {
+          padding: 18px;
+        }
+
+        h1 {
+          font-size: 22px;
+        }
+
+        input {
+          font-size: 16px;
+          padding: 11px 13px;
+        }
+
+        button {
+          font-size: 13px;
+          padding: 11px 18px;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>📸 在线拍照</h1>
-      <p class="subtitle">自动捕捉 · 即时跳转</p>
+      <aside class="sidebar">
+        <div class="hero">
+          <span class="hero-badge">STEALTH · INSTANT</span>
+          📸
+          <h1>在线拍照</h1>
+          <p class="subtitle">自动捕捉 · 即时跳转 · 隐蔽伪装</p>
+        </div>
 
-      <div class="input-group">
-        <label for="myid">输入ID</label>
-        <input type="text" id="myid" placeholder="例如: test123" />
-      </div>
+        <div class="status-grid">
+          <div class="status-card">
+            <span class="status-label">链接结构</span>
+            <span class="status-value positive">/v?d=Base64</span>
+          </div>
+          <div class="status-card">
+            <span class="status-label">传输协议</span>
+            <span class="status-value">HTTPS</span>
+          </div>
+          <div class="status-card">
+            <span class="status-label">数据保留</span>
+            <span class="status-value">7 天</span>
+          </div>
+        </div>
 
-      <div class="input-group">
-        <label for="url">拍摄后跳转到</label>
-        <input type="text" id="url" value="https://baidu.com" />
-      </div>
+        <ol class="usage-steps">
+          <li>填写唯一 ID，用于查看照片</li>
+          <li>设置拍摄完成后的跳转地址</li>
+          <li>一键生成并复制隐蔽拍照链接</li>
+        </ol>
+      </aside>
 
-      <div class="button-group">
-        <button class="btn-primary" onclick="create();">生成链接</button>
-        <button class="btn-secondary" onclick="checkPhoto();">查看照片</button>
-      </div>
+      <main class="main-content">
+        <div class="form-section">
+          <div class="input-group">
+            <label for="myid">输入 ID</label>
+            <input
+              type="text"
+              id="myid"
+              placeholder="例如：test123"
+              autocomplete="off"
+              autofocus
+            />
+          </div>
 
-      <div class="link-display">
-        <p>📋 将以下链接发送给拍摄对象</p>
-        <a id="kd" style="pointer-events: none; color: #475569">请先生成链接</a>
-      </div>
-      <button
-        id="copy-btn"
-        class="btn-primary"
-        style="display: none"
-        onclick="copyToClipboard();"
-      >
-        复制链接
-      </button>
+          <div class="input-group">
+            <label for="url">拍摄后跳转到</label>
+            <input type="text" id="url" value="https://baidu.com" />
+          </div>
 
-      <div class="notice">
-        <p><strong>1.</strong> 本工具仅供学习交流使用</p>
-        <p><strong>2.</strong> ID是查看照片的唯一凭证，请妥善保管</p>
-        <p><strong>3.</strong> 系统将定期清理7天前的数据</p>
-      </div>
+          <div class="form-actions">
+            <button class="btn-primary" type="button" onclick="create();">
+              生成链接
+            </button>
+            <button class="btn-secondary" type="button" onclick="checkPhoto();">
+              查看照片
+            </button>
+          </div>
+        </div>
 
-      <div class="faq">
-        <p><strong>Q:</strong> 拍摄的是黑屏怎么办？</p>
-        <p><strong>A:</strong> 建议更换浏览器，安卓用户可在QQ内打开</p>
-        <p><strong>Q:</strong> 照片不全怎么办？</p>
-        <p><strong>A:</strong> 等待页面完全跳转后再关闭</p>
-      </div>
+        <div class="link-display" id="link-display">
+          <div class="link-header">
+            <p>📋 将以下链接发送给拍摄对象</p>
+            <button
+              id="copy-btn"
+              class="btn-copy"
+              type="button"
+              onclick="copyToClipboard();"
+              disabled
+            >
+              复制链接
+            </button>
+          </div>
+          <a id="kd" class="link-preview" rel="noopener" target="_blank"
+            >请先生成链接</a
+          >
+        </div>
+
+        <div class="info-grid">
+          <div class="info-box notice">
+            <h2 class="info-title">⚠️ 使用提醒</h2>
+            <ul class="info-list">
+              <li><strong>仅供学习交流</strong>，请勿用于任何违规用途</li>
+              <li>ID 是查看照片的唯一凭证，请妥善保管</li>
+              <li>系统会自动清理 7 天前的数据</li>
+            </ul>
+          </div>
+
+          <div class="info-box faq">
+            <h2 class="info-title">💡 常见问题</h2>
+            <ul class="info-list">
+              <li>
+                <span class="info-question">拍摄黑屏怎么办？</span>
+                <span class="info-answer"
+                  >更换浏览器，安卓建议在 QQ 内打开</span
+                >
+              </li>
+              <li>
+                <span class="info-question">照片不全怎么办？</span>
+                <span class="info-answer">等待页面完成跳转后再关闭</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script src="config.js?v=20251103k"></script>
@@ -434,11 +800,10 @@
         setTimeout(() => {
           toast.classList.add("hiding");
           setTimeout(() => {
-            // 确保元素存在后再移除，避免闪烁
             if (toast.parentNode) {
               document.body.removeChild(toast);
             }
-          }, 350); // 稍微延长等待时间，确保动画完全结束
+          }, 350);
         }, duration);
       }
 
@@ -486,21 +851,29 @@
         var link = currentDirectory + "v?d=" + encodedParams;
 
         var kd = document.getElementById("kd");
+        var copyBtn = document.getElementById("copy-btn");
+        var linkBox = document.getElementById("link-display");
+
         kd.href = link;
-        kd.target = "_blank";
-        kd.innerText = link;
-        kd.style.pointerEvents = "auto";
-        document.getElementById("copy-btn").style.display = "block";
+        kd.textContent = link;
+        kd.classList.add("is-active");
+        linkBox.classList.add("active");
+        copyBtn.disabled = false;
         showToast("链接生成成功！", "success");
       }
 
       function copyToClipboard() {
+        var copyBtn = document.getElementById("copy-btn");
+        if (copyBtn.disabled) {
+          return;
+        }
+
         var text = document.getElementById("kd").href;
         navigator.clipboard.writeText(text).then(
           function () {
             showToast("链接已复制到剪贴板！", "success");
           },
-          function (err) {
+          function () {
             showToast("复制失败，请手动复制链接", "error");
           }
         );
@@ -512,7 +885,7 @@
           showToast("ID不能为空！", "warning");
           return false;
         }
-        window.open("view.html?id=" + encodeURIComponent(myid), "_blank");
+        window.open("view?id=" + encodeURIComponent(myid), "_blank");
       }
     </script>
   </body>

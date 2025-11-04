@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Online Mirror - Cloudflare版本",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "test-full": "node scripts/start-test.js",
+    "dev-worker": "wrangler dev",
+    "deploy-worker": "wrangler deploy",
+    "test-local": "npx serve -p 8080"
   },
   "devDependencies": {
     "wrangler": "^3.0.0"

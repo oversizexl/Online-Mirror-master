@@ -5,11 +5,14 @@
 </p>
 
 一个基于 Cloudflare 技术栈的在线拍照应用，完全免费、无需服务器、全球加速。
+
 - 源码完全开源（仅技术研究、禁止任何商业行为）
-- 使用Cloudflare存储图片 （赛博活佛、免费额度完全够玩）
+- 使用 Cloudflare 存储图片 （赛博活佛、免费额度完全够玩）
+
 ## ⚠️ 免责声明
 
-**本工具仅供学习交流使用，请勿用于非法用途！使用者需遵守当地法律法规，后果自负！**
+**本工具仅供学习交流使用，请勿用于非法用途！使用者需遵守当地法律法规，后果自负
+！**
 
 ## ✨ 特性
 
@@ -52,7 +55,6 @@
 
 ![网络架构](https://mdn.alipayobjects.com/one_clip/afts/img/xeh7Tbo3wWcAAAAASQAAAAgAoEACAQFr/original)
 
-
 ## 📁 项目结构
 
 ```
@@ -77,6 +79,8 @@ Online-Mirror/
 │   ├── deploy.sh           # Linux/Mac 一键部署
 │   ├── deploy-main.bat     # Windows 生产环境部署
 │   ├── deploy-main.sh      # Linux/Mac 生产环境部署
+│   ├── test-local.bat      # Windows 本地测试服务器
+│   ├── test-local.sh       # Linux/Mac 本地测试服务器
 │   └── test-dns.bat        # DNS 诊断脚本
 └── README.md               # 本文件
 ```
@@ -179,6 +183,26 @@ const API_BASE_URL = "https://online-mirror.your-subdomain.workers.dev";
 npx wrangler pages deploy . --project-name=online-mirror --branch=main
 ```
 
+## 🧪 本地测试
+
+```bash
+# 方法 1（推荐）
+npm run test
+
+# 方法 2
+python -m http.server 8080
+
+# 方法 3
+scripts\test-local.bat  # Windows
+./scripts/test-local.sh  # Linux/Mac
+```
+
+访问 http://localhost:8080/home.html 即可测试前端功能。
+
+**注意：** 上传功能需部署 Worker。
+
+---
+
 ## 🎮 使用方法
 
 1. **访问主页** - 打开部署后的网站
@@ -263,34 +287,13 @@ DELETE /api/photos?id=用户ID
 
 ## 🛠️ 本地开发
 
-### 启动开发服务器
-
 ```bash
-# 安装依赖
-npm install
+# 前端测试
+npm run test-full  # 访问 http://localhost:8080
 
-# 启动开发服务器
-npm run dev
-```
-
-这会启动：
-
-- Worker：http://localhost:8787
-- 前端：直接打开 `home.html` 或使用任何静态服务器
-
-### 测试 API
-
-```bash
-# 测试上传
-curl -X POST http://localhost:8787/api/upload \
-  -H "Content-Type: application/json" \
-  -d '{"id":"test123","image":"data:image/png;base64,iVBORw0..."}'
-
-# 测试获取照片
-curl http://localhost:8787/api/photos?id=test123&page=0&limit=2
-
-# 测试删除
-curl -X DELETE http://localhost:8787/api/photos?id=test123
+# 完整功能（需两个终端）
+npm run test  # 终端 1
+npm run dev   # 终端 2
 ```
 
 ## 💰 成本说明
@@ -385,7 +388,6 @@ wrangler r2 object list photos
 # 删除特定ID的文件
 wrangler r2 object delete photos/test123/20240101120000.png
 ```
-
 
 ### ⚠️ 重要安全提示
 
@@ -489,7 +491,8 @@ wrangler r2 object delete photos/test123/20240101120000.png
 1. 清除浏览器缓存（Ctrl + Shift + Delete）
 2. 使用隐私/无痕模式测试
 3. 确保 `_redirects` 文件内容为：`/v /v.html 200!`
-4. 重新部署：`npx wrangler pages deploy . --project-name=online-mirror --branch=main`
+4. 重新部署
+   ：`npx wrangler pages deploy . --project-name=online-mirror --branch=main`
 
 ### Q8：别人访问链接打不开或很慢？
 

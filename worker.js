@@ -13,6 +13,30 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
+    // 根路径和 API 文档
+    if (path === "/" || path === "/api") {
+      return new Response(
+        JSON.stringify({
+          service: "Online Mirror API",
+          version: "1.0.0",
+          status: "running",
+          timestamp: new Date().toISOString(),
+          endpoints: {
+            "GET /api/ping": "健康检查",
+            "POST /api/upload": "上传照片",
+            "GET /api/photos": "获取照片列表",
+            "DELETE /api/photos": "删除照片",
+            "GET /api/image/:id": "获取单张图片",
+          },
+          documentation: "https://github.com/yourusername/online-mirror",
+        }, null, 2),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // 图片直通端点 - 性能优化核心
     if (path.startsWith("/api/image/") && request.method === "GET") {
       return handleGetImage(request, env, corsHeaders);
@@ -362,7 +386,11 @@ async function handleDeletePhotos(request, env, corsHeaders) {
 
     console.log("找到文件数量:", listed.objects.length);
 
-    if (listed.objects.length === 0) {
+    // 只计数 PNG 文件（图片），不计数 JSON 文件（IP信息）
+    const pngFiles = listed.objects.filter((obj) => obj.key.endsWith(".png"));
+    const pngCount = pngFiles.length;
+
+    if (pngCount === 0) {
       return new Response(JSON.stringify({ 
         success: true, 
         deleted: 0,
@@ -385,14 +413,14 @@ async function handleDeletePhotos(request, env, corsHeaders) {
       }
     }
 
-    console.log(`✅ 删除完成，共删除 ${deletedCount}/${listed.objects.length} 个文件`);
+    console.log(`✅ 删除完成，共删除 ${pngCount} 张照片（含IP信息文件）`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        deleted: deletedCount,
-        total: listed.objects.length,
-        message: `已删除 ${deletedCount} 个文件`
+        deleted: pngCount,
+        total: pngCount,
+        message: `已删除 ${pngCount} 张照片`
       }),
       {
         status: 200,

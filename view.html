@@ -646,8 +646,23 @@
       const imgsPerPage = 2;
 
       if (!id) {
-        document.getElementById("content").innerHTML =
-          "<p>错误：缺少ID参数</p>";
+        document.getElementById("content").innerHTML = `
+          <div style="text-align: center; padding: 40px 20px;">
+            <h3 style="color: #666; margin-bottom: 20px;">📸 查看照片</h3>
+            <p style="color: #999; margin-bottom: 30px;">请输入 ID 查看照片</p>
+            <form onsubmit="event.preventDefault(); window.location.href='view.html?id=' + document.getElementById('view-id').value;">
+              <input id="view-id" type="text" placeholder="请输入 ID" 
+                style="width: 80%; max-width: 300px; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;" required>
+              <br><br>
+              <button type="submit" 
+                style="padding: 12px 40px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                查看照片
+              </button>
+            </form>
+            <br>
+            <a href="home.html" style="color: #2196F3; text-decoration: none;">← 返回主页</a>
+          </div>
+        `;
       } else {
         loadPhotos();
       }
